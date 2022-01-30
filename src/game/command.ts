@@ -77,14 +77,14 @@ async function help(args: CmdArgs): Promise<IMatchState> {
         stderr(
           ` | ${(cmd + " " + sub).padEnd(cmdlen)} | ${(subTable[sub].desc || "")
             .substring(0, desclen)
-            .padEnd(desclen)} | `
+            .padEnd(desclen)} |`
         );
       }
     } else {
       stderr(
         ` | ${cmd.padEnd(cmdlen)} | ${(table[cmd].desc || "")
           .substring(0, desclen)
-          .padEnd(desclen)} | `
+          .padEnd(desclen)} |`
       );
     }
   }

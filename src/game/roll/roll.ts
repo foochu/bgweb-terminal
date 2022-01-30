@@ -1,8 +1,9 @@
 import { GameState, IMatchState, PlayerType } from "../../types";
-import { CmdArgs, rollDice } from "..";
+import { CmdArgs, getCurrentSide, rollDice, swapTurn } from "..";
+import { getAllMoves } from "../../api";
 
 export async function roll(args: CmdArgs): Promise<IMatchState> {
-  const { state, stderr } = args;
+  const { state, stdout, stderr } = args;
 
   if (state.gameState !== GameState.Playing) {
     stderr("No game in progress (type `new game' to start one).");
@@ -34,6 +35,13 @@ export async function roll(args: CmdArgs): Promise<IMatchState> {
   }
 
   let dice = rollDice();
+
+  let moves = await getAllMoves(state.board, getCurrentSide(state), dice);
+
+  if (moves.length === 0) {
+    stdout(`${state.inTurn.name} cannot move.`);
+    return { ...swapTurn(state), dice: undefined };
+  }
 
   return {
     ...state,

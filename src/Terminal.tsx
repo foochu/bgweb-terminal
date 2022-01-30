@@ -33,6 +33,7 @@ const Input = styled.input`
   color: inherit;
   font-family: inherit;
   font-size: inherit;
+  width: calc(100% - 32px);
 `;
 
 const Ascii = styled.pre`
