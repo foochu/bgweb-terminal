@@ -13,7 +13,7 @@ type CommandTable = {
 const table: CommandTable = {
   new: {
     fn: {
-      game: { fn: newGame, desc: "Start a new game within the current match" },
+      game: { fn: newGame, desc: "Start a new game" },
     },
     desc: "Start a new game or match",
   },
@@ -66,17 +66,31 @@ function subCmd(sub: CommandTable): CmdProto {
 
 async function help(args: CmdArgs): Promise<IMatchState> {
   const { argv, state, stderr } = args;
+  const tablewidth = 43,
+    cmdlen = 10,
+    desclen = tablewidth - cmdlen - 7;
   function cmdHelp(cmd: string) {
     if (isCommandTable(table[cmd].fn)) {
       // has nested commands
       let subTable: CommandTable = table[cmd].fn as CommandTable;
       for (let sub of Object.getOwnPropertyNames(subTable)) {
-        stderr(` ${(cmd + " " + sub).padEnd(12)} ${subTable[sub].desc}`);
+        stderr(
+          ` | ${(cmd + " " + sub).padEnd(cmdlen)} | ${(subTable[sub].desc || "")
+            .substring(0, desclen)
+            .padEnd(desclen)} | `
+        );
       }
     } else {
-      stderr(` ${cmd.padEnd(12)} ${table[cmd].desc}`);
+      stderr(
+        ` | ${cmd.padEnd(cmdlen)} | ${(table[cmd].desc || "")
+          .substring(0, desclen)
+          .padEnd(desclen)} | `
+      );
     }
   }
+  stderr(` ${"-".repeat(tablewidth)}`);
+  stderr(` | ${"Command".padEnd(cmdlen)} | ${"Description".padEnd(desclen)} |`);
+  stderr(` ${"-".repeat(tablewidth)}`);
   if (argv[0]) {
     cmdHelp(argv[0]);
   } else {
@@ -84,7 +98,10 @@ async function help(args: CmdArgs): Promise<IMatchState> {
     for (let name of Object.getOwnPropertyNames(table)) {
       cmdHelp(name);
     }
-    stderr(` ${"clear".padEnd(12)} Clear the screen`);
+    stderr(
+      ` | ${"clear".padEnd(cmdlen)} | ${"Clear the screen".padEnd(desclen)} |`
+    );
   }
+  stderr(` ${"-".repeat(tablewidth)}`);
   return state;
 }

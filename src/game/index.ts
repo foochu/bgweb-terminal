@@ -38,26 +38,30 @@ export function getPlayerNotInTurn(state: Readonly<IMatchState>): IPlayer {
 export function showBoard(state: Readonly<IMatchState>, stdout: STDIO): void {
   // TODO: if (state.doubled) { }
 
-  function getRollInfo() {
+  function getRollInfo(sign: string) {
     if (state.dice) {
-      return `Rolled ${state.dice[0]}${state.dice[1]}`;
+      return `${sign} Rolled ${state.dice[0]}${state.dice[1]}`;
     } else if (state.gameState === GameState.Playing) {
-      return `On roll`;
+      return `${sign} On roll`;
     }
     return "";
   }
 
-  let sidebar: string[] = [
-    `O: ${state.players.o.name}`,
-    `${state.points.o} points`,
-    state.inTurn === state.players.o ? getRollInfo() : "",
-    "", // `(Cube: ${state.cube})`, // TODO: cube & match info
-    state.inTurn === state.players.x ? getRollInfo() : "",
-    `${state.points.x} points`,
-    `X: ${state.players.x.name}`,
-  ];
+  let info = {
+    X: {
+      name: state.players.x.name,
+      points: state.points.x,
+      roll: state.inTurn === state.players.x ? getRollInfo("X") : "",
+    },
+    O: {
+      name: state.players.o.name,
+      points: state.points.o,
+      roll: state.inTurn === state.players.o ? getRollInfo("O") : "",
+    },
+    // cube: state.cube TODO: cube & match info
+  };
 
-  drawBoard(stdout, state.board, getCurrentSide(state), sidebar, "n/a");
+  drawBoard(stdout, state.board, getCurrentSide(state), info);
 }
 
 export function swapTurn(state: Readonly<IMatchState>): IMatchState {

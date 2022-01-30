@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 const GlobalStyle = createGlobalStyle`
 body {
   margin:0;
+  background-color: rgb(13, 2, 8);
 }
 `;
 

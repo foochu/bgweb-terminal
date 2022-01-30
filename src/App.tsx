@@ -1,12 +1,11 @@
-import { TerminalContextProvider, ReactTerminal } from "react-terminal";
 import styled from "styled-components";
 import { GameState, IMatchState, IPlayer, PlayerType } from "./types";
 import { getCommands } from "./Cmd";
 import { useState } from "react";
+import { Terminal } from "./Terminal";
 
 const Container = styled.div`
   height: 100vh;
-  background-color: rgb(13, 2, 8);
 `;
 
 function initState(): IMatchState {
@@ -31,29 +30,36 @@ function initState(): IMatchState {
 
 function App() {
   const [state, setState] = useState(initState());
+  const [lines, setLines] = useState<string[]>([]);
+  const [input, setInput] = useState("");
 
   return (
     <Container>
-      <TerminalContextProvider>
-        <ReactTerminal
-          commands={{ ...getCommands(state, setState) }}
-          theme="matrix"
-          prompt={state.gameState === GameState.None ? "(no game)" : ">"}
-          enableInput={true}
-          errorMessage="invalid command"
-          showControlBar={false}
-          welcomeMessage={
-            <>
-              <div>Backgammon Web Terminal</div>
-              <div>Copyright (C) 2022 Rami Keränen</div>
-              <div>
-                Based on GNU Backgammon (https://www.gnu.org/software/gnubg)
-                under GPL license
-              </div>
-            </>
+      <Terminal
+        prompt={state.gameState === GameState.None ? "(no game)" : ">"}
+        lines={[
+          "Backgammon Web Terminal",
+          "Copyright (C) 2022 Rami Keränen",
+          "Based on GNU Backgammon under GPL license",
+          " ",
+          ...lines,
+        ]}
+        input={input}
+        onInput={(val) => setInput(val)}
+        onSubmit={async ({ line, argv }) => {
+          let commands = getCommands(state, setState);
+          const [command, ...rest] = argv;
+          if (command === "clear") {
+            setLines([]);
+          } else if (commands[command]) {
+            const args = rest.join(" ");
+            const output = await commands[command](args);
+            setLines([...lines, line, ...output, " "]);
+          } else {
+            setLines([...lines, line, "invalid command", " "]);
           }
-        />
-      </TerminalContextProvider>
+        }}
+      />
     </Container>
   );
 }

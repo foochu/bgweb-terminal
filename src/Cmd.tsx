@@ -1,18 +1,13 @@
 import { IMatchState } from "./types";
 import { CmdProto, commands } from "./game/command";
-import styled from "styled-components";
 import { showBoard } from "./game";
-
-const Ascii = styled.pre`
-  margin: 0;
-`;
 
 export function getCommands(
   state: IMatchState,
   setState: (state: IMatchState) => void
 ) {
   const ret: {
-    [name: string]: (argv: string) => Promise<JSX.Element | undefined>;
+    [name: string]: (argv: string) => Promise<string[]>;
   } = {};
 
   for (let { name, fn } of commands) {
@@ -27,7 +22,7 @@ async function exec(
   _argv: string,
   state: IMatchState,
   setState: (state: IMatchState) => void
-): Promise<JSX.Element | undefined> {
+): Promise<string[]> {
   let output: string[] = [];
   let errors: string[] = [];
   let stdout = (s: string) => output.push(s);
@@ -42,31 +37,15 @@ async function exec(
     setState(newState);
   } catch (e) {
     if (e instanceof Error) {
-      return <Ascii>{e.stack || e.message}</Ascii>;
+      return [e.stack || e.message];
     } else {
-      return <Ascii>{e as string}</Ascii>;
+      return [e as string];
     }
   }
 
   if (errors.length > 0) {
-    return (
-      <>
-        {errors.map((s, i) => (
-          <Ascii key={i}>{s}</Ascii>
-        ))}
-      </>
-    );
+    return errors;
   }
 
-  if (output.length > 0) {
-    return (
-      <>
-        {output.map((s, i) => (
-          <Ascii key={i}>{s}</Ascii>
-        ))}
-      </>
-    );
-  }
-
-  return undefined;
+  return output;
 }

@@ -6,29 +6,42 @@ const achO = "     O6789ABCDEF";
 
 /*
  *  BGWeb Terminal  Position ID: 0123456789ABCD
- *                  Match ID   : 0123456789ABCD
- *  +13-14-15-16-17-18------19-20-21-22-23-24-+     O: cpu (Cube: 2)
- *  |                  |   | O  O  O  O     O | OO  0 points
- *  |                  |   | O     O          | OO  Cube offered at 2
+ *         O: cpu (Cube: 2) - 0/7 points
+ *  +13-14-15-16-17-18------19-20-21-22-23-24-+
+ *  |                  |   | O  O  O  O     O | OO
+ *  |                  |   | O     O          | OO
  *  |                  |   |       O          | O
  *  |                  |   |                  | O
  *  |                  |   |                  | O
- * v|                  |BAR|                  |     Cube: 1 (7 point match)
+ * v|                  |BAR|   X Rolled 11    |
  *  |                  |   |                  | X
  *  |                  |   |                  | X
  *  |                  |   |                  | X
- *  |                  |   |       X  X  X  X | X   Rolled 11
- *  |                  |   |    X  X  X  X  X | XX  0 points
- *  +12-11-10--9--8--7-------6--5--4--3--2--1-+     X: chuck (Cube: 2)
- *
+ *  |                  |   |       X  X  X  X | X
+ *  |                  |   |    X  X  X  X  X | XX
+ *  +12-11-10--9--8--7-------6--5--4--3--2--1-+
+ *        X: chuck (Cube: 2) - 0/7 points
  */
+
+type GameInfo = {
+  X: PlayerInfo;
+  O: PlayerInfo;
+  cube?: number;
+  matchTo?: number;
+};
+
+type PlayerInfo = {
+  name: string;
+  points: number;
+  roll?: string;
+  cube?: number;
+};
 
 export function drawBoard(
   stdout: STDIO,
   board: IBoard,
   onRoll: PlayerSide,
-  sidebar: string[],
-  matchId: string
+  info: GameInfo
 ): void {
   let cOffO = board.o.off || 0,
     cOffX = board.x.off || 0;
@@ -49,23 +62,13 @@ export function drawBoard(
     stdout(line);
   })();
 
-  (function () {
-    if (matchId) {
-      // pch += sprintf(pch, "                 %s   : %s\n", _("Match ID"), szMatchID);
-      let line = `                 Match ID   : ${matchId}`;
-      stdout(line);
-    }
-  })();
+  stdout(formatPlayerInfo(info.O, "O", info));
 
   (function () {
     let line =
       onRoll === PlayerSide.X
         ? " +13-14-15-16-17-18------19-20-21-22-23-24-+     "
         : " +12-11-10--9--8--7-------6--5--4--3--2--1-+     ";
-
-    if (sidebar[0]) {
-      line += sidebar[0];
-    }
 
     stdout(line);
   })();
@@ -93,9 +96,7 @@ export function drawBoard(
         line += cOffO > 5 * x + y ? "O" : " ";
       }
       line += " ";
-      if (y < 2 && sidebar[y + 1]) {
-        line += sidebar[y + 1];
-      }
+
       stdout(line);
     }
   })();
@@ -133,11 +134,24 @@ export function drawBoard(
 
   (function () {
     let line = onRoll === PlayerSide.X ? "v" : "^";
-    line += "|                  |BAR|                  |     ";
 
-    if (sidebar[3]) {
-      line += sidebar[3];
+    line += "|";
+
+    if (info.O.roll) {
+      line += centerText(info.O.roll, 18);
+    } else {
+      line += "".padEnd(18);
     }
+
+    line += "|BAR|";
+
+    if (info.X.roll) {
+      line += centerText(info.X.roll, 18);
+    } else {
+      line += "".padEnd(18);
+    }
+
+    line += "|     ";
 
     stdout(line);
   })();
@@ -195,9 +209,7 @@ export function drawBoard(
         line += cOffX > 5 * x + y ? "X" : " ";
       }
       line += " ";
-      if (y < 2 && sidebar[5 - y]) {
-        line += sidebar[5 - y];
-      }
+
       stdout(line);
     }
   })();
@@ -208,10 +220,30 @@ export function drawBoard(
         ? " +12-11-10--9--8--7-------6--5--4--3--2--1-+     "
         : " +13-14-15-16-17-18------19-20-21-22-23-24-+     ";
 
-    if (sidebar[6]) {
-      line += sidebar[6];
-    }
-
     stdout(line);
   })();
+
+  stdout(formatPlayerInfo(info.X, "X", info));
+}
+
+function formatPlayerInfo(p: PlayerInfo, sign: string, info: GameInfo) {
+  let txt = `${sign}: ${p.name}`;
+  if (p.cube) {
+    txt += ` (Cube: ${p.cube})`;
+  }
+  if (info.matchTo) {
+    txt += ` - ${p.points}/${info.matchTo} points`;
+  } else {
+    txt += ` - ${p.points} points`;
+  }
+
+  return ` ${centerText(txt, 43)}`.padEnd(49);
+}
+
+function centerText(txt: string, len: number) {
+  if (txt.length > len) {
+    return txt.substring(0, len);
+  }
+  let pos = Math.floor(len / 2) - Math.ceil(txt.length / 2);
+  return `${"".padEnd(pos)}${txt}`.padEnd(len);
 }
