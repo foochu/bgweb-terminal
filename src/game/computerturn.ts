@@ -64,7 +64,7 @@ export async function computerTurn(
   }
 
   // show state after roll
-  showBoard({ ...state, dice }, stdout);
+  state = showBoard({ ...state, dice }, stdout);
 
   let moves = await getBestMoves(state.board, getCurrentSide(state), dice);
 

@@ -7,7 +7,7 @@ import {
   PlayerType,
   STDIO,
 } from "../../types";
-import { CmdArgs, rollDice } from "..";
+import { CmdArgs, rollDice, showBoard } from "..";
 import { computerTurn } from "../computerturn";
 
 export async function newGame(args: CmdArgs): Promise<IMatchState> {
@@ -26,7 +26,7 @@ export async function newGame(args: CmdArgs): Promise<IMatchState> {
     }
   }
 
-  return await startNewGame(state, stdout, stderr);
+  return showBoard(await startNewGame(state, stdout, stderr), stdout);
 }
 
 async function startNewGame(

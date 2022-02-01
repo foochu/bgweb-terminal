@@ -30,8 +30,11 @@ describe("take", () => {
     state = await take({ argv: [], state, stdout, stderr });
 
     expect(stderr.mock.calls.length).toEqual(0);
-    expect(stdout.mock.calls.length).toEqual(1);
+    expect(stdout.mock.calls.length).toEqual(2);
     expect(stdout.mock.calls[0]).toEqual(["chuck accepts the cube at 2."]);
+    expect(stdout.mock.calls[1][0]).toContain(
+      " BGWeb Terminal  Position ID: 4HPwATDgc/ABMA"
+    );
 
     expect(state.cube).toEqual(2);
     expect(state.cubeOwner).toBe(x);

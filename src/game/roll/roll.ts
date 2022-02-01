@@ -1,5 +1,5 @@
 import { GameState, IMatchState, PlayerType } from "../../types";
-import { CmdArgs, getCurrentSide, rollDice, swapTurn } from "..";
+import { CmdArgs, getCurrentSide, rollDice, showBoard, swapTurn } from "..";
 import { getAllMoves } from "../../api";
 
 export async function roll(args: CmdArgs): Promise<IMatchState> {
@@ -36,17 +36,22 @@ export async function roll(args: CmdArgs): Promise<IMatchState> {
 
   let dice = rollDice();
 
+  let newState = showBoard(
+    {
+      ...state,
+      dice: [Math.max(dice[0], dice[1]), Math.min(dice[0], dice[1])],
+      onRoll: state.inTurn,
+      doubled: false,
+    },
+    stdout
+  );
+
   let moves = await getAllMoves(state.board, getCurrentSide(state), dice);
 
   if (moves.length === 0) {
     stdout(`${state.inTurn.name} cannot move.`);
-    return { ...swapTurn(state), dice: undefined };
+    return showBoard({ ...swapTurn(newState), dice: undefined }, stdout);
   }
 
-  return {
-    ...state,
-    dice: [Math.max(dice[0], dice[1]), Math.min(dice[0], dice[1])],
-    onRoll: state.inTurn,
-    doubled: false,
-  };
+  return newState;
 }

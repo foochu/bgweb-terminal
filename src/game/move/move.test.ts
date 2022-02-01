@@ -59,8 +59,10 @@ describe("move", () => {
     state = await move({ argv: ["8/5", "6/5"], state, stdout, stderr });
 
     expect(stderr.mock.calls.length).toEqual(0);
-    expect(stdout.mock.calls.length).toEqual(0);
-    //    expect(stdout.mock.calls[0]).toEqual(["todo"]);
+    expect(stdout.mock.calls.length).toEqual(1);
+    expect(stdout.mock.calls[0][0]).toContain(
+      " BGWeb Terminal  Position ID: sGfwATDgc/ABMA"
+    );
 
     expect(state.board).toEqual({
       x: { 5: 2, 6: 4, 8: 2, 13: 5, 24: 2 },

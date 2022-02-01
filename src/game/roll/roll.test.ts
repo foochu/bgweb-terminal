@@ -59,7 +59,10 @@ describe("roll", () => {
     state = await roll({ argv: [], state, stdout, stderr });
 
     expect(stderr.mock.calls.length).toEqual(0);
-    expect(stdout.mock.calls.length).toEqual(0);
+    expect(stdout.mock.calls.length).toEqual(1);
+    expect(stdout.mock.calls[0][0]).toContain(
+      " BGWeb Terminal  Position ID: 4HPwATDgc/ABMA"
+    );
 
     expect(state.dice).toEqual([3, 3]);
     expect(state.inTurn).toBe(x);
@@ -87,8 +90,14 @@ describe("roll", () => {
     state = await roll({ argv: [], state, stdout, stderr });
 
     expect(stderr.mock.calls.length).toEqual(0);
-    expect(stdout.mock.calls.length).toEqual(1);
-    expect(stdout.mock.calls[0]).toEqual(["chuck cannot move."]);
+    expect(stdout.mock.calls.length).toEqual(3);
+    expect(stdout.mock.calls[0][0]).toContain(
+      " BGWeb Terminal  Position ID: 4HPwATDgc/ABMA"
+    );
+    expect(stdout.mock.calls[1]).toEqual(["chuck cannot move."]);
+    expect(stdout.mock.calls[2][0]).toContain(
+      " BGWeb Terminal  Position ID: 4HPwATDgc/ABMA"
+    );
 
     expect(state.dice).toBe(undefined);
     expect(state.inTurn).toBe(o);

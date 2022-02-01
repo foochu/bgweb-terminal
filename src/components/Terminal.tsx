@@ -32,7 +32,7 @@ const Prompt = styled.span`
 `;
 
 const Ascii = styled.pre`
-  margin: 0;
+  margin: 8px 0;
 `;
 
 type Props = {

@@ -7,26 +7,29 @@ import { hint } from "./hint/hint";
 import { IMatchState } from "../types";
 
 type CommandTable = {
-  [name: string]: { fn: CmdProto | CommandTable; desc: string };
+  [name: string]: { def: CmdDef; desc: string };
 };
+
+type CmdDef = CmdProto | CommandTable | string;
 
 const table: CommandTable = {
   new: {
-    fn: {
-      game: { fn: newGame, desc: "Start a new game" },
+    def: {
+      game: { def: newGame, desc: "Start a new game" },
     },
     desc: "Start a new game or match",
   },
-  move: { fn: move, desc: "Make a backgammon move" },
-  play: { fn: play, desc: "Force the computer to move" },
+  move: { def: move, desc: "Make a backgammon move" },
+  play: { def: play, desc: "Force the computer to move" },
   // decline,
   // redouble,
-  // reject: { fn: reject, desc: "Reject a cube or resignation" },
-  // resign: { fn: resign, desc: "Offer to end the current game" },
-  roll: { fn: roll, desc: "Roll the dice" },
+  // reject: { def: reject, desc: "Reject a cube or resignation" },
+  // resign: { def: resign, desc: "Offer to end the current game" },
+  roll: { def: roll, desc: "Roll the dice" },
   // take,
-  hint: { fn: hint, desc: "Give hint on best moves" },
-  help: { fn: help, desc: "Describe commands" },
+  hint: { def: hint, desc: "Give hint on best moves" },
+  xhint: { def: "hint x", desc: "Give detailed hint" },
+  help: { def: help, desc: "Describe commands" },
 };
 
 export type { CmdProto };
@@ -36,13 +39,33 @@ export const commands: {
   fn: CmdProto;
 }[] = Object.getOwnPropertyNames(table).map((name) => ({
   name,
-  fn: isCommandTable(table[name].fn)
-    ? subCmd(table[name].fn as CommandTable)
-    : (table[name].fn as CmdProto),
+  fn: getCmdFn(table, name),
 }));
 
-function isCommandTable(fn: CmdProto | CommandTable): fn is CommandTable {
-  return !(fn instanceof Function);
+function getCmdFn(table: CommandTable, name: string): CmdProto {
+  if (isString(table[name].def)) {
+    return aliasCmd(table[name].def as string);
+  }
+  if (isCommandTable(table[name].def)) {
+    return subCmd(table[name].def as CommandTable);
+  }
+  return table[name].def as CmdProto;
+}
+
+function isString(def: CmdDef): def is string {
+  return typeof def === "string";
+}
+
+function isCommandTable(def: CmdDef): def is CommandTable {
+  return !(def instanceof Function || typeof def === "string");
+}
+
+function aliasCmd(alias: string): CmdProto {
+  let [name, ...argv] = alias.split(" ");
+  return async function (args: CmdArgs): Promise<IMatchState> {
+    let fn = getCmdFn(table, name);
+    return await fn({ ...args, argv });
+  };
 }
 
 function subCmd(sub: CommandTable): CmdProto {
@@ -52,45 +75,47 @@ function subCmd(sub: CommandTable): CmdProto {
       stderr(`incomplete command`);
       return state;
     }
-    let cmd = sub[argv[0]];
-    if (!cmd) {
+    let fn = getCmdFn(sub, argv[0]);
+    if (!fn) {
       stderr(`invalid sub command '${argv[0]}'`);
       return state;
     }
-    if (isCommandTable(cmd.fn)) {
-      throw new Error("only support 1 level of nested commands");
-    }
-    return await cmd.fn(args);
+    return await fn(args);
   };
 }
 
 async function help(args: CmdArgs): Promise<IMatchState> {
-  const { argv, state, stderr } = args;
+  const { argv, state, stdout } = args;
+  let output: string[] = [];
   const tablewidth = 43,
     cmdlen = 10,
     desclen = tablewidth - cmdlen - 7;
+
   function cmdHelp(cmd: string) {
-    if (isCommandTable(table[cmd].fn)) {
+    if (isCommandTable(table[cmd].def)) {
       // has nested commands
-      let subTable: CommandTable = table[cmd].fn as CommandTable;
+      let subTable: CommandTable = table[cmd].def as CommandTable;
       for (let sub of Object.getOwnPropertyNames(subTable)) {
-        stderr(
+        output.push(
           ` | ${(cmd + " " + sub).padEnd(cmdlen)} | ${(subTable[sub].desc || "")
             .substring(0, desclen)
             .padEnd(desclen)} |`
         );
       }
     } else {
-      stderr(
+      output.push(
         ` | ${cmd.padEnd(cmdlen)} | ${(table[cmd].desc || "")
           .substring(0, desclen)
           .padEnd(desclen)} |`
       );
     }
   }
-  stderr(` ${"-".repeat(tablewidth)}`);
-  stderr(` | ${"Command".padEnd(cmdlen)} | ${"Description".padEnd(desclen)} |`);
-  stderr(` ${"-".repeat(tablewidth)}`);
+
+  output.push(` ${"-".repeat(tablewidth)}`);
+  output.push(
+    ` | ${"Command".padEnd(cmdlen)} | ${"Description".padEnd(desclen)} |`
+  );
+  output.push(` ${"-".repeat(tablewidth)}`);
   if (argv[0]) {
     cmdHelp(argv[0]);
   } else {
@@ -98,10 +123,11 @@ async function help(args: CmdArgs): Promise<IMatchState> {
     for (let name of Object.getOwnPropertyNames(table)) {
       cmdHelp(name);
     }
-    stderr(
+    output.push(
       ` | ${"clear".padEnd(cmdlen)} | ${"Clear the screen".padEnd(desclen)} |`
     );
   }
-  stderr(` ${"-".repeat(tablewidth)}`);
+  output.push(` ${"-".repeat(tablewidth)}`);
+  stdout(output.join("\n"));
   return state;
 }

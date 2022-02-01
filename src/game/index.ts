@@ -35,7 +35,10 @@ export function getPlayerNotInTurn(state: Readonly<IMatchState>): IPlayer {
   return state.players.x;
 }
 
-export function showBoard(state: Readonly<IMatchState>, stdout: STDIO): void {
+export function showBoard(
+  state: Readonly<IMatchState>,
+  stdout: STDIO
+): IMatchState {
   // TODO: if (state.doubled) { }
 
   function getRollInfo(sign: string) {
@@ -61,7 +64,13 @@ export function showBoard(state: Readonly<IMatchState>, stdout: STDIO): void {
     // cube: state.cube TODO: cube & match info
   };
 
-  drawBoard(stdout, state.board, getCurrentSide(state), info);
+  let output: string[] = [];
+
+  drawBoard((s) => output.push(s), state.board, getCurrentSide(state), info);
+
+  stdout(output.join("\n"));
+
+  return state;
 }
 
 export function swapTurn(state: Readonly<IMatchState>): IMatchState {

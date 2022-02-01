@@ -3,11 +3,15 @@ import { GameState, IMatchState, IMove, IPlayer, PlayerType } from "../types";
 import { useState } from "react";
 import { Terminal } from "./Terminal";
 import { CmdProto, commands } from "../game/command";
-import { getCurrentSide, showBoard } from "../game";
+import { getCurrentSide } from "../game";
 import { formatMove } from "../game/formatMove";
 import { useQuery, UseQueryResult } from "react-query";
 import { positionIdFromBoard } from "../game/positionid";
 import { getAllMoves } from "../api";
+
+const title = `Backgammon Web Terminal
+Copyright (C) 2022 Rami Keränen
+Based on GNU Backgammon under GPL license`;
 
 const Container = styled.div`
   height: 100vh;
@@ -56,13 +60,7 @@ function App() {
     <Container>
       <Terminal
         prompt={state.gameState === GameState.None ? "(no game)" : ">"}
-        lines={[
-          "Backgammon Web Terminal",
-          "Copyright (C) 2022 Rami Keränen",
-          "Based on GNU Backgammon under GPL license",
-          " ",
-          ...lines,
-        ]}
+        lines={[title, ...lines]}
         input={input}
         onInput={(val) => setInput(val)}
         onSubmit={async ({ line, argv }) => {
@@ -72,54 +70,15 @@ function App() {
           } else if (commands[command]) {
             const args = rest.join(" ");
             const output = await commands[command](args);
-            setLines([...lines, line, ...output, " "]);
+            setLines([...lines, line, ...output]);
           } else {
-            setLines([...lines, line, "invalid command", " "]);
+            setLines([...lines, line, "invalid command"]);
           }
         }}
         suggestions={getSuggestions(state, movesQuery)}
       />
     </Container>
   );
-}
-
-function getSuggestions(
-  state: IMatchState,
-  movesQuery: UseQueryResult<IMove[], unknown>
-): string[] {
-  let suggestions: string[] = [];
-  if (state.gameState !== GameState.Playing) {
-    // no game in progress
-    suggestions.push("new game");
-  } else {
-    if (state.inTurn.type === PlayerType.Human) {
-      // player's turn
-      if (state.dice) {
-        if (movesQuery.isLoading) {
-          suggestions.push(`move (loading...)`);
-        } else if (movesQuery.error) {
-          suggestions.push(`move (${movesQuery.error})`);
-        } else {
-          for (let move of movesQuery.data || []) {
-            suggestions.push("move");
-            suggestions.push(`move ${formatMove(move, state.board.o)}`);
-          }
-        }
-        suggestions.push("hint");
-      } else {
-        suggestions.push("roll");
-      }
-      suggestions.push("new game");
-    } else {
-      // computer's turn
-      suggestions.push("play");
-      suggestions.push("new game");
-    }
-  }
-
-  // always add help
-  suggestions.push("help");
-  return suggestions;
 }
 
 function getCommands(
@@ -152,8 +111,6 @@ async function exec(
 
   try {
     let newState = await cmd({ argv, state, stdout, stderr });
-    stdout(" ");
-    showBoard(newState, stdout);
     setState(newState);
   } catch (e) {
     if (e instanceof Error) {
@@ -168,6 +125,46 @@ async function exec(
   }
 
   return output;
+}
+
+function getSuggestions(
+  state: IMatchState,
+  movesQuery: UseQueryResult<IMove[], unknown>
+): string[] {
+  let suggestions: string[] = [];
+  if (state.gameState !== GameState.Playing) {
+    // no game in progress
+    suggestions.push("new game");
+  } else {
+    if (state.inTurn.type === PlayerType.Human) {
+      // player's turn
+      if (state.dice) {
+        if (movesQuery.isLoading) {
+          suggestions.push(`move (loading...)`);
+        } else if (movesQuery.error) {
+          suggestions.push(`move (${movesQuery.error})`);
+        } else {
+          for (let move of movesQuery.data || []) {
+            suggestions.push("move");
+            suggestions.push(`move ${formatMove(move, state.board.o)}`);
+          }
+        }
+        suggestions.push("hint");
+        suggestions.push("xhint");
+      } else {
+        suggestions.push("roll");
+      }
+      suggestions.push("new game");
+    } else {
+      // computer's turn
+      suggestions.push("play");
+      suggestions.push("new game");
+    }
+  }
+
+  // always add help
+  suggestions.push("help");
+  return suggestions;
 }
 
 export default App;

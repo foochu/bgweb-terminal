@@ -1,5 +1,5 @@
 import { GameState, IMatchState, PlayerType } from "../../types";
-import { CmdArgs, swapTurn } from "..";
+import { CmdArgs, showBoard, swapTurn } from "..";
 
 export async function take(args: CmdArgs): Promise<IMatchState> {
   const { state, stdout, stderr } = args;
@@ -20,11 +20,14 @@ export async function take(args: CmdArgs): Promise<IMatchState> {
 
   stdout(`${state.inTurn.name} accepts the cube at ${newCube}.`);
 
-  return {
-    ...swapTurn(state),
-    cube: newCube,
-    beavers: false,
-    doubled: false,
-    cubeOwner: state.inTurn,
-  };
+  return showBoard(
+    {
+      ...swapTurn(state),
+      cube: newCube,
+      beavers: false,
+      doubled: false,
+      cubeOwner: state.inTurn,
+    },
+    stdout
+  );
 }

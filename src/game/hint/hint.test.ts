@@ -84,14 +84,14 @@ describe("hint", () => {
 
     state = await hint({ argv: [], state, stdout, stderr });
 
-    expect(stderr.mock.calls.length).toEqual(4);
-    expect(stderr.mock.calls).toEqual([
-      [" 1. Cubeless 3-ply   8/4                          Eq. 0.218 "],
-      ["       win: 55% (G:17% BG:1%) - lose: 45% (G:12% BG:1%)"],
-      [" 2. Cubeless 3-ply   8/5 6/5                      Eq. -0.012 (-0.23)"],
-      ["       win: 50% (G:14% BG:1%) - lose: 50% (G:14% BG:1%)"],
+    expect(stderr.mock.calls.length).toEqual(0);
+    expect(stdout.mock.calls.length).toEqual(1);
+    expect(stdout.mock.calls).toEqual([
+      [
+        ` 1. 8/4                          Eq. 0.218 
+ 2. 8/5 6/5                      Eq. -0.012 (-0.23)`,
+      ],
     ]);
-    expect(stdout.mock.calls.length).toEqual(0);
 
     expect(state.inTurn).toBe(x);
     expect(state.onRoll).toBe(x);

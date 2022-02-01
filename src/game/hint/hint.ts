@@ -9,7 +9,7 @@ import { getBestMoves } from "../../api";
 import { formatMove } from "../formatMove";
 
 export async function hint(args: CmdArgs): Promise<IMatchState> {
-  const { state, stderr } = args;
+  const { argv, state, stdout, stderr } = args;
   if (state.gameState !== GameState.Playing) {
     stderr("No game in progress (type `new game' to start one).");
     return state;
@@ -36,6 +36,7 @@ export async function hint(args: CmdArgs): Promise<IMatchState> {
       opponent = state.board.x;
     }
 
+    let output: string[] = [];
     for (let i = 0; i < moves.length; i++) {
       if (!moves[i].evaluation) {
         continue; // bad data
@@ -48,20 +49,29 @@ export async function hint(args: CmdArgs): Promise<IMatchState> {
           probability: { win, winG, winBG, lose, loseG, loseBG } = {},
         },
       } = moves[i];
-      // hack, (mis)use stderr to prevent board to be drawn
-      stderr(
-        ` ${i + 1}. ${cubeful ? "Cubeful " : "Cubeless"} ${
-          plies || 1
-        }-ply   ${formatMove(moves[i], opponent).padEnd(28, " ")} Eq. ${eq} ${
-          i ? `(${diff})` : ""
-        }`
-      );
-      stderr(
-        `       win: ${p(win)}% (G:${p(winG)}% BG:${p(winBG)}%) - lose: ${p(
-          lose
-        )}% (G:${p(loseG)}% BG:${p(loseBG)}%)`
-      );
+      if (argv[0] === "x") {
+        output.push(
+          ` ${i + 1}. ${cubeful ? "Cubeful " : "Cubeless"} ${
+            plies || 1
+          }-ply   ${formatMove(moves[i], opponent).padEnd(28, " ")} Eq. ${eq} ${
+            i ? `(${diff})` : ""
+          }`
+        );
+        output.push(
+          `       win: ${p(win)}% (G:${p(winG)}% BG:${p(winBG)}%) - lose: ${p(
+            lose
+          )}% (G:${p(loseG)}% BG:${p(loseBG)}%)`
+        );
+      } else {
+        output.push(
+          ` ${i + 1}. ${formatMove(moves[i], opponent).padEnd(
+            28,
+            " "
+          )} Eq. ${eq} ${i ? `(${diff})` : ""}`
+        );
+      }
     }
+    stdout(output.join("\n"));
     return state;
   }
 

@@ -1,6 +1,6 @@
 import { isLegalMove } from "../legalmoves";
 import { GameState, IMatchState, IMove, PlayerType } from "../../types";
-import { CmdArgs, getCurrentSide, makeMove } from "..";
+import { CmdArgs, getCurrentSide, makeMove, showBoard } from "..";
 import { parseMove } from "../parsemove";
 
 export async function move(args: CmdArgs): Promise<IMatchState> {
@@ -56,5 +56,5 @@ export async function move(args: CmdArgs): Promise<IMatchState> {
     return state;
   }
 
-  return makeMove(state, move, stdout);
+  return showBoard(makeMove(state, move, stdout), stdout);
 }
