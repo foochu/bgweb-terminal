@@ -1,4 +1,4 @@
-import { IBoard, PlayerSide, STDIO } from "../types";
+import { IBoard, ICheckerLayout, PlayerSide, STDIO } from "../types";
 import { positionIdFromBoard } from "./positionid";
 
 const achX = "     X6789ABCDEF";
@@ -6,7 +6,7 @@ const achO = "     O6789ABCDEF";
 
 /*
  *  BGWeb Terminal  Position ID: 0123456789ABCD
- *         O: cpu (Cube: 2) - 0/7 points
+ *      O: cpu [25] (Cube: 2) - 0/7 points
  *  +13-14-15-16-17-18------19-20-21-22-23-24-+
  *  |                  |   | O  O  O  O     O | OO
  *  |                  |   | O     O          | OO
@@ -20,7 +20,7 @@ const achO = "     O6789ABCDEF";
  *  |                  |   |       X  X  X  X | X
  *  |                  |   |    X  X  X  X  X | XX
  *  +12-11-10--9--8--7-------6--5--4--3--2--1-+
- *        X: chuck (Cube: 2) - 0/7 points
+ *     X: chuck [25] (Cube: 2) - 0/7 points
  */
 
 type GameInfo = {
@@ -62,7 +62,7 @@ export function drawBoard(
     stdout(line);
   })();
 
-  stdout(formatPlayerInfo(info.O, "O", info));
+  stdout(formatPlayerInfo(info.O, "O", info, countPips(board.x)));
 
   (function () {
     let line =
@@ -80,7 +80,8 @@ export function drawBoard(
 
       for (x = 13; x < 19; x++) {
         line += " ";
-        line += board.x[x] > y ? "X" : board.o[25 - x] > y ? "O" : " ";
+        line +=
+          (board.x[x] || 0) > y ? "X" : (board.o[25 - x] || 0) > y ? "O" : " ";
         line += " ";
       }
       line += "| ";
@@ -88,7 +89,8 @@ export function drawBoard(
       line += " |";
       for (; x < 25; x++) {
         line += " ";
-        line += board.x[x] > y ? "X" : board.o[25 - x] > y ? "O" : " ";
+        line +=
+          (board.x[x] || 0) > y ? "X" : (board.o[25 - x] || 0) > y ? "O" : " ";
         line += " ";
       }
       line += "| ";
@@ -107,7 +109,9 @@ export function drawBoard(
 
     for (x = 13; x < 19; x++) {
       line += " ";
-      line += board.x[x] ? achX[board.x[x]] : achO[board.o[25 - x] || 0];
+      line += board.x[x]
+        ? achX[board.x[x] as number]
+        : achO[board.o[25 - x] || 0];
       line += " ";
     }
 
@@ -117,7 +121,9 @@ export function drawBoard(
 
     for (; x < 25; x++) {
       line += " ";
-      line += board.x[x] ? achX[board.x[x]] : achO[board.o[25 - x] || 0];
+      line += board.x[x]
+        ? achX[board.x[x] as number]
+        : achO[board.o[25 - x] || 0];
       line += " ";
     }
 
@@ -162,7 +168,9 @@ export function drawBoard(
 
     for (x = 12; x > 6; x--) {
       line += " ";
-      line += board.x[x] ? achX[board.x[x]] : achO[board.o[25 - x] || 0];
+      line += board.x[x]
+        ? achX[board.x[x] as number]
+        : achO[board.o[25 - x] || 0];
       line += " ";
     }
 
@@ -172,7 +180,9 @@ export function drawBoard(
 
     for (; x > 0; x--) {
       line += " ";
-      line += board.x[x] ? achX[board.x[x]] : achO[board.o[25 - x] || 0];
+      line += board.x[x]
+        ? achX[board.x[x] as number]
+        : achO[board.o[25 - x] || 0];
       line += " ";
     }
 
@@ -193,7 +203,8 @@ export function drawBoard(
 
       for (x = 12; x > 6; x--) {
         line += " ";
-        line += board.x[x] > y ? "X" : board.o[25 - x] > y ? "O" : " ";
+        line +=
+          (board.x[x] || 0) > y ? "X" : (board.o[25 - x] || 0) > y ? "O" : " ";
         line += " ";
       }
       line += "| ";
@@ -201,7 +212,8 @@ export function drawBoard(
       line += " |";
       for (; x > 0; x--) {
         line += " ";
-        line += board.x[x] > y ? "X" : board.o[25 - x] > y ? "O" : " ";
+        line +=
+          (board.x[x] || 0) > y ? "X" : (board.o[25 - x] || 0) > y ? "O" : " ";
         line += " ";
       }
       line += "| ";
@@ -223,11 +235,18 @@ export function drawBoard(
     stdout(line);
   })();
 
-  stdout(formatPlayerInfo(info.X, "X", info));
+  stdout(formatPlayerInfo(info.X, "X", info, countPips(board.x)));
 }
 
-function formatPlayerInfo(p: PlayerInfo, sign: string, info: GameInfo) {
+function formatPlayerInfo(
+  p: PlayerInfo,
+  sign: string,
+  info: GameInfo,
+  pips: number
+) {
   let txt = `${sign}: ${p.name}`;
+  txt += ` [${pips}]`;
+
   if (p.cube) {
     txt += ` (Cube: ${p.cube})`;
   }
@@ -246,4 +265,13 @@ function centerText(txt: string, len: number) {
   }
   let pos = Math.floor(len / 2) - Math.ceil(txt.length / 2);
   return `${"".padEnd(pos)}${txt}`.padEnd(len);
+}
+
+function countPips(layout: ICheckerLayout): number {
+  let pips = 0;
+  for (let i = 1; i < 25; i++) {
+    pips += (layout[i] || 0) * i;
+  }
+  pips += (layout.bar || 0) * 25;
+  return pips;
 }

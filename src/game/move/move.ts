@@ -56,5 +56,5 @@ export async function move(args: CmdArgs): Promise<IMatchState> {
     return state;
   }
 
-  return showBoard(makeMove(state, move, stdout), stdout);
+  return makeMove(state, move, stdout);
 }

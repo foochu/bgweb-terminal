@@ -26,7 +26,7 @@ export async function newGame(args: CmdArgs): Promise<IMatchState> {
     }
   }
 
-  return showBoard(await startNewGame(state, stdout, stderr), stdout);
+  return await startNewGame(state, stdout, stderr);
 }
 
 async function startNewGame(
@@ -84,8 +84,9 @@ async function startNewGame(
   };
 
   if (inTurn.type === PlayerType.Human) {
-    return newState;
+    return showBoard(newState, stdout);
   }
+
   return await computerTurn(newState, stdout, stderr);
 }
 

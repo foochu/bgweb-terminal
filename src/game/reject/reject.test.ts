@@ -1,10 +1,4 @@
-import {
-  GameState,
-  IMatchState,
-  IPlayer,
-  PlayerSide,
-  PlayerType,
-} from "../../types";
+import { GameState, IMatchState, IPlayer, PlayerType } from "../../types";
 import { reject } from "./reject";
 
 describe("reject", () => {
@@ -37,8 +31,11 @@ describe("reject", () => {
     state = await reject({ argv: [], state, stdout, stderr });
 
     expect(stderr.mock.calls.length).toEqual(0);
-    expect(stdout.mock.calls.length).toEqual(1);
+    expect(stdout.mock.calls.length).toEqual(2);
     expect(stdout.mock.calls[0]).toEqual(["chuck declines the single game."]);
+    expect(stdout.mock.calls[1][0]).toContain(
+      " BGWeb Terminal  Position ID: 4HPwATDgc/ABMA"
+    );
 
     expect(state.resigned).toEqual(undefined);
     expect(state.resignationDeclined).toEqual(1);

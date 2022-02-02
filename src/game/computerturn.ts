@@ -24,11 +24,14 @@ export async function computerTurn(
   if (state.resigned) {
     // TODO: just always decline for now
     stdout(`${state.inTurn.name} declines the resignation`);
-    return {
-      ...swapTurn(state),
-      resignationDeclined: state.resigned,
-      resigned: undefined,
-    };
+    return showBoard(
+      {
+        ...swapTurn(state),
+        resignationDeclined: state.resigned,
+        resigned: undefined,
+      },
+      stdout
+    );
   }
 
   // ***********************************************
@@ -70,7 +73,7 @@ export async function computerTurn(
 
   if (moves.length === 0) {
     stdout(`${state.inTurn.name} cannot move.`);
-    return { ...swapTurn(state), dice: undefined };
+    return showBoard({ ...swapTurn(state), dice: undefined }, stdout);
   }
 
   // make the best move

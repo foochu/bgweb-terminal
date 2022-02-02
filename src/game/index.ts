@@ -110,17 +110,21 @@ export function makeMove(
       n = getPoints(board.x);
       o += n;
     }
-    stdout(`Game complete. ${state.inTurn.name} wins ${n} point`);
-    return {
-      ...state,
-      board,
-      dice: undefined,
-      gameState: GameState.Over,
-      points: { x, o },
-    };
+    let newState = showBoard(
+      {
+        ...state,
+        board,
+        dice: undefined,
+        gameState: GameState.Over,
+        points: { x, o },
+      },
+      stdout
+    );
+    stdout(`Game complete. ${newState.inTurn.name} wins ${n} point`);
+    return newState;
   }
 
-  return { ...swapTurn(state), board, dice: undefined };
+  return showBoard({ ...swapTurn(state), board, dice: undefined }, stdout);
 }
 
 export function isGameOver(board: IBoard) {

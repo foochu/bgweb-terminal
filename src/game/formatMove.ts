@@ -14,27 +14,35 @@ export function formatMove(move: IMove, opponent: ICheckerLayout) {
 
   // combine moves of a single chequer
   for (let i = 0; i < play.length; i++) {
-    if (!play[i + 1]) {
-      break;
-    }
     if (play[i].to !== "off" && opponent[25 - (play[i].to as number)]) {
       // Hitting blot, keep
       continue;
     }
-    if (play[i].to === play[i + 1].from) {
-      play[i].to = play[i + 1].to;
-      play.splice(i + 1, 1);
+    for (let j = i + 1; j < play.length; j++) {
+      if (!play[j]) {
+        break;
+      }
+      if (play[i].to === play[j].from) {
+        play[i].to = play[j].to;
+        play.splice(j, 1);
+        i--;
+        break;
+      }
     }
   }
 
   // combine duplicates
   for (let i = 0; i < play.length; i++) {
-    if (!play[i + 1]) {
-      break;
-    }
-    if (play[i].to === play[i + 1].to && play[i].from === play[i + 1].from) {
-      play[i].count++;
-      play.splice(i + 1, 1);
+    for (let j = i + 1; j < play.length; j++) {
+      if (!play[j]) {
+        break;
+      }
+      if (play[i].to === play[j].to && play[i].from === play[j].from) {
+        play[i].count++;
+        play.splice(j, 1);
+        i--;
+        break;
+      }
     }
   }
 

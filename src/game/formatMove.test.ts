@@ -67,4 +67,36 @@ describe("format move", () => {
       )
     ).toEqual("24/18 18/13");
   });
+
+  it("should format 13/9(2)", () => {
+    expect(
+      formatMove(
+        {
+          play: [
+            { from: 13, to: 11 },
+            { from: 11, to: 9 },
+            { from: 13, to: 11 },
+            { from: 11, to: 9 },
+          ],
+        },
+        board.o
+      )
+    ).toEqual("13/9(2)");
+  });
+
+  it.only("should format bar/21 8/4(3)", () => {
+    expect(
+      formatMove(
+        {
+          play: [
+            { from: "bar", to: 21 },
+            { from: 8, to: 4 },
+            { from: 8, to: 4 },
+            { from: 8, to: 4 },
+          ],
+        },
+        board.o
+      )
+    ).toEqual("bar/21 8/4(3)");
+  });
 });

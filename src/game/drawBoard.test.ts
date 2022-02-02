@@ -23,7 +23,7 @@ describe("draw board", () => {
 
     expect(stdout.mock.calls.map((a) => a[0])).toEqual([
       " BGWeb Terminal  Position ID: 4HPwATDgc/ABMA",
-      "             O: cpu - 0 points                   ",
+      "          O: cpu [167] - 0 points                ",
       " +13-14-15-16-17-18------19-20-21-22-23-24-+     ",
       " | X           O    |   | O              X |     ",
       " | X           O    |   | O              X |     ",
@@ -37,7 +37,7 @@ describe("draw board", () => {
       " | O           X    |   | X              O |     ",
       " | O           X    |   | X              O |     ",
       " +12-11-10--9--8--7-------6--5--4--3--2--1-+     ",
-      "            X: chuck - 0 points                  ",
+      "         X: chuck [167] - 0 points               ",
     ]);
   });
 
@@ -52,7 +52,7 @@ describe("draw board", () => {
 
     expect(stdout.mock.calls.map((a) => a[0])).toEqual([
       " BGWeb Terminal  Position ID: 4HPwATDgc/ABMA",
-      "             O: cpu - 0 points                   ",
+      "          O: cpu [167] - 0 points                ",
       " +12-11-10--9--8--7-------6--5--4--3--2--1-+     ",
       " | X           O    |   | O              X |     ",
       " | X           O    |   | O              X |     ",
@@ -66,7 +66,7 @@ describe("draw board", () => {
       " | O           X    |   | X              O |     ",
       " | O           X    |   | X              O |     ",
       " +13-14-15-16-17-18------19-20-21-22-23-24-+     ",
-      "            X: chuck - 0 points                  ",
+      "         X: chuck [167] - 0 points               ",
     ]);
   });
 
@@ -81,7 +81,7 @@ describe("draw board", () => {
 
     expect(stdout.mock.calls.map((a) => a[0])).toEqual([
       " BGWeb Terminal  Position ID: 4HPwAVDgc/ABUA",
-      "             O: cpu - 0 points                   ",
+      "          O: cpu [168] - 0 points                ",
       " +12-11-10--9--8--7-------6--5--4--3--2--1-+     ",
       " | X           O    | O | O              X |     ",
       " | X           O    |   | O                |     ",
@@ -95,7 +95,7 @@ describe("draw board", () => {
       " | O           X    |   | X                |     ",
       " | O           X    | X | X              O |     ",
       " +13-14-15-16-17-18------19-20-21-22-23-24-+     ",
-      "            X: chuck - 0 points                  ",
+      "         X: chuck [168] - 0 points               ",
     ]);
   });
 
@@ -127,7 +127,7 @@ describe("draw board", () => {
 
     expect(stdout.mock.calls.map((a) => a[0])).toEqual([
       " BGWeb Terminal  Position ID: 6RoAALYtAAAAAA",
-      "       O: cpu (Cube: 2) - 0/7 points             ",
+      "     O: cpu [25] (Cube: 2) - 0/7 points          ",
       " +13-14-15-16-17-18------19-20-21-22-23-24-+     ",
       " |                  |   | O  O  O  O     O | OO  ",
       " |                  |   | O     O          | OO  ",
@@ -141,7 +141,7 @@ describe("draw board", () => {
       " |                  |   |       X  X  X  X | X   ",
       " |                  |   |    X  X  X  X  X | XX  ",
       " +12-11-10--9--8--7-------6--5--4--3--2--1-+     ",
-      "      X: chuck (Cube: 2) - 0/7 points            ",
+      "    X: chuck [25] (Cube: 2) - 0/7 points         ",
     ]);
   });
 });

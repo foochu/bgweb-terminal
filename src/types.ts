@@ -8,7 +8,7 @@ export interface IBoard {
 export type Dice = number[];
 
 export interface ICheckerLayout {
-  [index: number]: number;
+  [index: number]: number | undefined;
   bar?: number;
   off?: number;
 }

@@ -11,7 +11,7 @@ describe("move", () => {
     type: PlayerType.Computer,
   };
 
-  const legalMoves = [
+  const _legalMoves = [
     {
       play: [
         { from: "8", to: "5" },
@@ -25,6 +25,7 @@ describe("move", () => {
       ],
     },
   ];
+  let legalMoves: any;
 
   beforeEach(() => {
     // mock fetch
@@ -33,6 +34,7 @@ describe("move", () => {
       ok: true,
       json: async () => legalMoves,
     } as any);
+    legalMoves = _legalMoves;
   });
 
   afterEach(() => {
@@ -71,5 +73,48 @@ describe("move", () => {
     expect(state.dice).toBe(undefined);
     expect(state.inTurn).toBe(o);
     expect(state.onRoll).toBe(o);
+  });
+
+  it("should detect game over", async () => {
+    let stdout = jest.fn(),
+      stderr = jest.fn();
+
+    let state: IMatchState = {
+      players: { x, o },
+      board: {
+        x: { 1: 1, off: 14 },
+        o: { 1: 1, off: 14 },
+      },
+      inTurn: x,
+      onRoll: x,
+      gameState: GameState.Playing,
+      dice: [3, 1],
+      points: { x: 0, o: 0 },
+    };
+
+    legalMoves = [
+      {
+        play: [{ from: "1", to: "off" }],
+      },
+    ];
+
+    state = await move({ argv: ["1/off"], state, stdout, stderr });
+
+    expect(stderr.mock.calls.length).toEqual(0);
+    expect(stdout.mock.calls.length).toEqual(2);
+    expect(stdout.mock.calls[0][0]).toContain(
+      " BGWeb Terminal  Position ID: AQAAAAAAAAAAAA"
+    );
+    expect(stdout.mock.calls[1]).toEqual(["Game complete. chuck wins 1 point"]);
+
+    expect(state.board).toEqual({
+      x: { off: 15 },
+      o: { 1: 1, off: 14 },
+    });
+    expect(state.dice).toBe(undefined);
+    expect(state.inTurn).toBe(x);
+    expect(state.onRoll).toBe(x);
+    expect(state.gameState).toBe(GameState.Over);
+    expect(state.points).toEqual({ x: 1, o: 0 });
   });
 });

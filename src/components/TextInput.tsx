@@ -17,7 +17,7 @@ const Input = styled.input`
   z-index: 1;
 `;
 
-const Complete = styled.div`
+const TypeAhead = styled.div`
   position: absolute;
   top: 0;
   display: flex;
@@ -29,11 +29,16 @@ const Complete = styled.div`
 type Props = {
   value: string;
   onChange: (value: string) => void;
-  suggestions: string[];
-  inputRef: React.RefObject<HTMLInputElement>;
+  suggestions?: string[];
+  inputRef?: React.RefObject<HTMLInputElement>;
 };
 
-export function TextInput({ value, onChange, suggestions, inputRef }: Props) {
+export function TextInput({
+  value,
+  onChange,
+  suggestions = [],
+  inputRef,
+}: Props) {
   const [autoCompIndex, setAutoCompIndex] = useState(0);
 
   // safety
@@ -54,6 +59,7 @@ export function TextInput({ value, onChange, suggestions, inputRef }: Props) {
   return (
     <Wrapper>
       <Input
+        data-testid="input"
         autoFocus
         type="text"
         autoComplete="off"
@@ -71,6 +77,7 @@ export function TextInput({ value, onChange, suggestions, inputRef }: Props) {
                 onChange(suggest[autoCompIndex] || "");
                 break;
               case "ArrowRight":
+              case "Space":
                 // next letter
                 e.preventDefault();
                 onChange(
@@ -112,7 +119,7 @@ export function TextInput({ value, onChange, suggestions, inputRef }: Props) {
         onChange={(e) => onChange(e.target.value)}
         ref={inputRef}
       />
-      <Complete>{suggest[autoCompIndex]}</Complete>
+      <TypeAhead data-testid="type-ahead">{suggest[autoCompIndex]}</TypeAhead>
     </Wrapper>
   );
 }

@@ -31,9 +31,9 @@ export function applyPlay(
 
   if (play.from === "bar") {
     // coming in from the bar
-    ret.bar = (ret.bar || 0) - 1;
+    ret.bar = (ret.bar || 0) - 1 || undefined;
   } else {
-    ret[play.from] = (ret[play.from] || 0) - 1;
+    ret[play.from] = (ret[play.from] || 0) - 1 || undefined;
   }
   if (play.to === "off") {
     // bearing off
@@ -41,7 +41,7 @@ export function applyPlay(
   } else {
     ret[play.to] = (ret[play.to] || 0) + 1;
 
-    if (opponent[25 - play.to] > 0) {
+    if ((opponent[25 - play.to] || 0) > 0) {
       // hit, move to bar
       opponent[25 - play.to] = 0;
       opponent.bar = (opponent.bar || 0) + 1;

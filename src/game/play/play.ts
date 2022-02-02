@@ -1,6 +1,6 @@
 import { computerTurn } from "../computerturn";
 import { GameState, IMatchState, PlayerType } from "../../types";
-import { CmdArgs, showBoard } from "..";
+import { CmdArgs } from "..";
 
 export async function play(args: CmdArgs): Promise<IMatchState> {
   const { state, stdout, stderr } = args;
@@ -14,5 +14,5 @@ export async function play(args: CmdArgs): Promise<IMatchState> {
     return state;
   }
 
-  return showBoard(await computerTurn(state, stdout, stderr), stdout);
+  return await computerTurn(state, stdout, stderr);
 }

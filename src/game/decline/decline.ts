@@ -1,5 +1,5 @@
 import { GameState, IMatchState, PlayerType } from "../../types";
-import { CmdArgs, gameResult, swapTurn } from "..";
+import { CmdArgs, gameResult, swapTurn, showBoard } from "..";
 
 export async function decline(args: CmdArgs): Promise<IMatchState> {
   const { state, stdout, stderr } = args;
@@ -26,9 +26,12 @@ export async function decline(args: CmdArgs): Promise<IMatchState> {
     stdout(`${state.inTurn.name} declines the resignation`);
   }
 
-  return {
-    ...swapTurn(state),
-    resignationDeclined: state.resigned,
-    resigned: undefined,
-  };
+  return showBoard(
+    {
+      ...swapTurn(state),
+      resignationDeclined: state.resigned,
+      resigned: undefined,
+    },
+    stdout
+  );
 }
