@@ -6,7 +6,7 @@ const achO = "     O6789ABCDEF";
 
 /*
  *  BGWeb Terminal  Position ID: 0123456789ABCD
- *      O: cpu [25] (Cube: 2) - 0/7 points
+ *      O: cpu [33] (Cube: 2) - 0/7 points
  *  +13-14-15-16-17-18------19-20-21-22-23-24-+
  *  |                  |   | O  O  O  O     O | OO
  *  |                  |   | O     O          | OO
@@ -62,7 +62,7 @@ export function drawBoard(
     stdout(line);
   })();
 
-  stdout(formatPlayerInfo(info.O, "O", info, countPips(board.x)));
+  stdout(formatPlayerInfo(info.O, "O", info, countPips(board.o)));
 
   (function () {
     let line =

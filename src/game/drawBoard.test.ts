@@ -127,7 +127,7 @@ describe("draw board", () => {
 
     expect(stdout.mock.calls.map((a) => a[0])).toEqual([
       " BGWeb Terminal  Position ID: 6RoAALYtAAAAAA",
-      "     O: cpu [25] (Cube: 2) - 0/7 points          ",
+      "     O: cpu [33] (Cube: 2) - 0/7 points          ",
       " +13-14-15-16-17-18------19-20-21-22-23-24-+     ",
       " |                  |   | O  O  O  O     O | OO  ",
       " |                  |   | O     O          | OO  ",

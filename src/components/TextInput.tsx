@@ -77,7 +77,7 @@ export function TextInput({
                 onChange(suggest[autoCompIndex] || "");
                 break;
               case "ArrowRight":
-              case "Space":
+              case " ":
                 // next letter
                 e.preventDefault();
                 onChange(

@@ -73,7 +73,7 @@ describe("TextInput", () => {
     expect(screen.getByTestId(/type-ahead/i)).toHaveTextContent("foobar");
 
     fireEvent.keyDown(screen.getByTestId(/input/i), {
-      key: "Space",
+      key: " ",
     });
 
     expect(onChange).toHaveBeenCalledWith("foob");
