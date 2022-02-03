@@ -45,10 +45,9 @@ describe("commands", () => {
  -------------------------------------------
  | new game   | Start a new game           |
  | move       | Make a backgammon move     |
- | play       | Force the computer to move |
+ | play       | Tell the computer to move  |
  | roll       | Roll the dice              |
  | hint       | Give hint on best moves    |
- | xhint      | Give detailed hint         |
  | help       | Describe commands          |
  | clear      | Clear the screen           |
  -------------------------------------------`,

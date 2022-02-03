@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import { act } from "react-dom/test-utils";
 import { TextInput } from "./TextInput";
 
 describe("TextInput", () => {
@@ -18,8 +19,10 @@ describe("TextInput", () => {
     );
     expect(screen.getByTestId(/type-ahead/i)).toHaveTextContent("foobar");
 
-    fireEvent.keyDown(screen.getByTestId(/input/i), {
-      key: "Enter",
+    act(() => {
+      fireEvent.keyDown(screen.getByTestId(/input/i), {
+        key: "Enter",
+      });
     });
 
     expect(onChange).toHaveBeenCalledWith("foobar");
@@ -36,8 +39,10 @@ describe("TextInput", () => {
     );
     expect(screen.getByTestId(/type-ahead/i)).toHaveTextContent("foo1");
 
-    fireEvent.keyDown(screen.getByTestId(/input/i), {
-      key: "ArrowDown",
+    act(() => {
+      fireEvent.keyDown(screen.getByTestId(/input/i), {
+        key: "ArrowDown",
+      });
     });
 
     expect(screen.getByTestId(/type-ahead/i)).toHaveTextContent("foo2");
@@ -54,8 +59,10 @@ describe("TextInput", () => {
     );
     expect(screen.getByTestId(/type-ahead/i)).toHaveTextContent("foo1");
 
-    fireEvent.keyDown(screen.getByTestId(/input/i), {
-      key: "ArrowUp",
+    act(() => {
+      fireEvent.keyDown(screen.getByTestId(/input/i), {
+        key: "ArrowUp",
+      });
     });
 
     expect(screen.getByTestId(/type-ahead/i)).toHaveTextContent("foo3");
@@ -72,8 +79,10 @@ describe("TextInput", () => {
     );
     expect(screen.getByTestId(/type-ahead/i)).toHaveTextContent("foobar");
 
-    fireEvent.keyDown(screen.getByTestId(/input/i), {
-      key: " ",
+    act(() => {
+      fireEvent.keyDown(screen.getByTestId(/input/i), {
+        key: " ",
+      });
     });
 
     expect(onChange).toHaveBeenCalledWith("foob");

@@ -39,9 +39,18 @@ function initState(): IMatchState {
 
 function App() {
   const [state, setState] = useState(initState());
-  const [lines, setLines] = useState<string[]>([]);
+  const [lines, setLines] = useState<string[]>([title]);
   const [input, setInput] = useState("");
 
+  let commands = getCommands(state, setState);
+
+  useEffect(() => {
+    (async function () {
+      let help = await commands["help"]("");
+      setLines([...lines, ...help]);
+    })();
+  }, []);
+ 
   useEffect(() => {
     const maxLines = 150;
     if (lines.length > maxLines) {
@@ -61,13 +70,11 @@ function App() {
     }
   );
 
-  let commands = getCommands(state, setState);
-
   return (
     <Container>
       <Terminal
         prompt={state.gameState === GameState.None ? "(no game)" : ">"}
-        lines={[title, ...lines]}
+        lines={lines}
         input={input}
         onInput={(val) => setInput(val)}
         onSubmit={async ({ line, argv }) => {
@@ -157,7 +164,6 @@ function getSuggestions(
           }
         }
         suggestions.push("hint");
-        suggestions.push("xhint");
       } else {
         suggestions.push("roll");
       }

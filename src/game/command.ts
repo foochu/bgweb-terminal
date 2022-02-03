@@ -20,7 +20,7 @@ const table: CommandTable = {
     desc: "Start a new game or match",
   },
   move: { def: move, desc: "Make a backgammon move" },
-  play: { def: play, desc: "Force the computer to move" },
+  play: { def: play, desc: "Tell the computer to move" },
   // decline,
   // redouble,
   // reject: { def: reject, desc: "Reject a cube or resignation" },
@@ -28,7 +28,6 @@ const table: CommandTable = {
   roll: { def: roll, desc: "Roll the dice" },
   // take,
   hint: { def: hint, desc: "Give hint on best moves" },
-  xhint: { def: "hint x", desc: "Give detailed hint" },
   help: { def: help, desc: "Describe commands" },
 };
 
