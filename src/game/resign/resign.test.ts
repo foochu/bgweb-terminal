@@ -40,9 +40,7 @@ describe("resign", () => {
     expect(stdout.mock.calls[0]).toEqual([
       "chuck offers to resign a single game.",
     ]);
-    expect(stdout.mock.calls[1][0]).toContain(
-      " BGWeb Terminal  Position ID: 4HPwATDgc/ABMA"
-    );
+    expect(stdout.mock.calls[1][0]).toContain("|BAR|");
 
     expect(state.inTurn).toBe(o);
     expect(state.onRoll).toBe(o);
@@ -69,9 +67,7 @@ describe("resign", () => {
     expect(stderr.mock.calls.length).toEqual(0);
     expect(stdout.mock.calls.length).toEqual(2);
     expect(stdout.mock.calls[0]).toEqual(["chuck offers to resign a gammon."]);
-    expect(stdout.mock.calls[1][0]).toContain(
-      " BGWeb Terminal  Position ID: 4HPwATDgc/ABMA"
-    );
+    expect(stdout.mock.calls[1][0]).toContain("|BAR|");
 
     expect(state.inTurn).toBe(o);
     expect(state.onRoll).toBe(o);

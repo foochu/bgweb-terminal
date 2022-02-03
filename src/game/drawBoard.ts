@@ -46,21 +46,21 @@ export function drawBoard(
   let cOffO = board.o.off || 0,
     cOffX = board.x.off || 0;
 
-  (function () {
-    let line = " BGWeb Terminal  Position ID: ";
+  // (function () {
+  //   let line = " BGWeb Terminal  Position ID: ";
 
-    if (onRoll === PlayerSide.X) {
-      line += positionIdFromBoard(board);
-    } else {
-      let swapped: IBoard = {
-        x: board.o,
-        o: board.x,
-      };
-      line += positionIdFromBoard(swapped);
-    }
+  //   if (onRoll === PlayerSide.X) {
+  //     line += positionIdFromBoard(board);
+  //   } else {
+  //     let swapped: IBoard = {
+  //       x: board.o,
+  //       o: board.x,
+  //     };
+  //     line += positionIdFromBoard(swapped);
+  //   }
 
-    stdout(line);
-  })();
+  //   stdout(line);
+  // })();
 
   stdout(formatPlayerInfo(info.O, "O", info, countPips(board.o)));
 
@@ -244,19 +244,23 @@ function formatPlayerInfo(
   info: GameInfo,
   pips: number
 ) {
-  let txt = `${sign}: ${p.name}`;
-  txt += ` [${pips}]`;
+  let txt = "  ";
+  txt += `${sign}: ${p.name}`.padEnd(18);
+  txt += `[${`${pips}`.padEnd(3)}]`;
 
-  if (p.cube) {
-    txt += ` (Cube: ${p.cube})`;
-  }
+  // if (p.cube) {
+  //   txt += ` (Cube: ${p.cube})`;
+  // }
+
   if (info.matchTo) {
-    txt += ` - ${p.points}/${info.matchTo} points`;
+    txt += `points: ${p.points}/${info.matchTo}`.padStart(18);
   } else {
-    txt += ` - ${p.points} points`;
+    txt += `points: ${p.points}`.padStart(18);
   }
 
-  return ` ${centerText(txt, 43)}`.padEnd(49);
+  txt += "      "
+
+  return txt;
 }
 
 function centerText(txt: string, len: number) {

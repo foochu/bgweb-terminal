@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { GameState, IMatchState, IMove, IPlayer, PlayerType } from "../types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Terminal } from "./Terminal";
 import { CmdProto, commands } from "../game/command";
 import { getCurrentSide } from "../game";
@@ -41,6 +41,13 @@ function App() {
   const [state, setState] = useState(initState());
   const [lines, setLines] = useState<string[]>([]);
   const [input, setInput] = useState("");
+
+  useEffect(() => {
+    const maxLines = 150;
+    if (lines.length > maxLines) {
+      setLines(lines.slice(Math.floor(maxLines / 3)));
+    }
+  }, [lines]);
 
   const stateId = `${positionIdFromBoard(state.board)}/[${(
     state.dice || []

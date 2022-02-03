@@ -38,9 +38,7 @@ describe("newgame", () => {
     expect(stderr.mock.calls.length).toEqual(0);
     expect(stdout.mock.calls.length).toEqual(2);
     expect(stdout.mock.calls[0]).toEqual(["chuck rolls 5, cpu rolls 3."]);
-    expect(stdout.mock.calls[1][0]).toContain(
-      " BGWeb Terminal  Position ID: 4HPwATDgc/ABMA"
-    );
+    expect(stdout.mock.calls[1][0]).toContain("|BAR|");
 
     expect(state.gameState).toBe(GameState.Playing);
     expect(state.board).toEqual({

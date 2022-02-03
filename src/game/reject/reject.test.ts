@@ -33,9 +33,7 @@ describe("reject", () => {
     expect(stderr.mock.calls.length).toEqual(0);
     expect(stdout.mock.calls.length).toEqual(2);
     expect(stdout.mock.calls[0]).toEqual(["chuck declines the single game."]);
-    expect(stdout.mock.calls[1][0]).toContain(
-      " BGWeb Terminal  Position ID: 4HPwATDgc/ABMA"
-    );
+    expect(stdout.mock.calls[1][0]).toContain("|BAR|");
 
     expect(state.resigned).toEqual(undefined);
     expect(state.resignationDeclined).toEqual(1);

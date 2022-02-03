@@ -50,13 +50,9 @@ describe("play", () => {
 
     expect(stderr.mock.calls.length).toEqual(0);
     expect(stdout.mock.calls.length).toEqual(3);
-    expect(stdout.mock.calls[0][0]).toContain(
-      " BGWeb Terminal  Position ID: 4HPwATDgc/ABMA"
-    );
+    expect(stdout.mock.calls[0][0]).toContain("|BAR|");
     expect(stdout.mock.calls[1]).toEqual(["cpu moves 8/5 6/5."]);
-    expect(stdout.mock.calls[2][0]).toContain(
-      " BGWeb Terminal  Position ID: sGfwATDgc/ABMA"
-    );
+    expect(stdout.mock.calls[2][0]).toContain("|BAR|");
 
     expect(state.board).toEqual({
       x: { 6: 5, 8: 3, 13: 5, 24: 2 },

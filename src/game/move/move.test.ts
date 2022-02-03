@@ -62,9 +62,7 @@ describe("move", () => {
 
     expect(stderr.mock.calls.length).toEqual(0);
     expect(stdout.mock.calls.length).toEqual(1);
-    expect(stdout.mock.calls[0][0]).toContain(
-      " BGWeb Terminal  Position ID: sGfwATDgc/ABMA"
-    );
+    expect(stdout.mock.calls[0][0]).toContain("|BAR|");
 
     expect(state.board).toEqual({
       x: { 5: 2, 6: 4, 8: 2, 13: 5, 24: 2 },
@@ -102,9 +100,7 @@ describe("move", () => {
 
     expect(stderr.mock.calls.length).toEqual(0);
     expect(stdout.mock.calls.length).toEqual(2);
-    expect(stdout.mock.calls[0][0]).toContain(
-      " BGWeb Terminal  Position ID: AQAAAAAAAAAAAA"
-    );
+    expect(stdout.mock.calls[0][0]).toContain("|BAR|");
     expect(stdout.mock.calls[1]).toEqual(["Game complete. chuck wins 1 point"]);
 
     expect(state.board).toEqual({
