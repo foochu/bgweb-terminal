@@ -49,8 +49,9 @@ function App() {
       let help = await commands["help"]("");
       setLines([...lines, ...help]);
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
- 
+
   useEffect(() => {
     const maxLines = 150;
     if (lines.length > maxLines) {

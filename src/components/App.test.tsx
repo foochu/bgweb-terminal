@@ -1,4 +1,4 @@
-import { findByTestId, render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { QueryClientProvider, QueryClient } from "react-query";
 import App from "./App";
 
