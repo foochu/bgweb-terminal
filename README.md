@@ -4,6 +4,8 @@ Backgammon Web Terminal. Allows to play a game of Backgammon powered by https://
 
 Based on GNU Backgammon (https://www.gnu.org/software/gnubg) under GPL license.
 
+Demo: https://backgammon.foochu.com
+
 ## Run the application
 
 ```sh
