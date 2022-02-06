@@ -5,6 +5,7 @@ describe("Terminal", () => {
   it("renders terminal", () => {
     render(
       <Terminal
+        title="bgweb"
         input="foo"
         onInput={jest.fn()}
         onSubmit={jest.fn()}

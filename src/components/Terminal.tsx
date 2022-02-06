@@ -36,6 +36,7 @@ const Ascii = styled.pre`
 `;
 
 type Props = {
+  title: string;
   prompt: string;
   lines: string[];
   input: string;
@@ -44,7 +45,17 @@ type Props = {
   suggestions: string[];
 };
 
+export function Splash({ title, children }: { title: string; children: any }) {
+  return (
+    <Editor>
+      <Ascii>{title}</Ascii>
+      <Ascii>{children}</Ascii>
+    </Editor>
+  );
+}
+
 export function Terminal({
+  title,
   prompt,
   lines,
   input,
@@ -68,6 +79,7 @@ export function Terminal({
         }
       }}
     >
+      <Ascii>{title}</Ascii>
       {lines.map((line, i) => (
         <Ascii key={i}>{line}</Ascii>
       ))}

@@ -8,6 +8,13 @@ import {
   PlayerSide,
 } from "../types";
 
+function exec_wasm_get_moves(input: string): string {
+  if (!window.wasm_get_moves) {
+    throw new Error("wasm_get_moves not registered");
+  }
+  return window.wasm_get_moves(input);
+}
+
 export async function getAllMoves(
   board: IBoard,
   player: PlayerSide,
@@ -31,23 +38,21 @@ async function _getBestMoves(
   maxMoves: number,
   scoreMoves: boolean
 ): Promise<IScoredMove[]> {
-  let res = await fetch("/api/v1/getmoves", {
-    method: "post",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      board: { x: mapLayout(board.x), o: mapLayout(board.o) },
-      dice: [dice[0], dice[1]],
-      player: player === PlayerSide.X ? "x" : "o",
-      "max-moves": maxMoves,
-      "score-moves": scoreMoves,
-    }),
-  });
-  if (!res.ok) {
-    throw new Error(`Request failed with status ${res.status}`);
+  let res = JSON.parse(
+    exec_wasm_get_moves(
+      JSON.stringify({
+        board: { x: mapLayout(board.x), o: mapLayout(board.o) },
+        dice: [dice[0], dice[1]],
+        player: player === PlayerSide.X ? "x" : "o",
+        "max-moves": maxMoves,
+        "score-moves": scoreMoves,
+      })
+    )
+  );
+  if (res.error) {
+    throw new Error(`wasm error: ${res.error}`);
   }
-  const data: any[] = await res.json();
+  const data: any[] = res;
   return data.map(({ play, ...rest }) => {
     return { ...rest, play: mapPlay(play) };
   });

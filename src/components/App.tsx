@@ -1,17 +1,21 @@
 import styled from "styled-components";
 import { GameState, IMatchState, IMove, IPlayer, PlayerType } from "../types";
 import { useEffect, useState } from "react";
-import { Terminal } from "./Terminal";
+import { Terminal, Splash } from "./Terminal";
 import { CmdProto, commands } from "../game/command";
 import { getCurrentSide } from "../game";
 import { formatMove } from "../game/formatMove";
 import { useQuery, UseQueryResult } from "react-query";
 import { positionIdFromBoard } from "../game/positionid";
 import { getAllMoves } from "../api";
+import { useWasm } from "../wasm/useWasm";
 
-const title = `Backgammon Web Terminal
-Copyright (C) 2022 Rami Keränen
-Based on GNU Backgammon under GPL license`;
+const title =
+  "Backgammon Web Terminal\n" +
+  "Copyright (C) 2022 Rami Keränen\n" +
+  "Based on GNU Backgammon under GPL license";
+
+const loading = "      Loading, please wait...   ";
 
 const Container = styled.div`
   height: 100vh;
@@ -37,10 +41,21 @@ function initState(): IMatchState {
   };
 }
 
+// @ts-expect-error: global.Go is fetched via a <script> tag
+const go: any = new Go();
+
 function App() {
   const [state, setState] = useState(initState());
-  const [lines, setLines] = useState<string[]>([title]);
+  const [lines, setLines] = useState<string[]>([]);
   const [input, setInput] = useState("");
+
+  const wasmState = useWasm(
+    "gbweb.1.wasm",
+    go.importObject,
+    async (instance) => {
+      await go.run(instance);
+    }
+  );
 
   let commands = getCommands(state, setState);
 
@@ -71,9 +86,17 @@ function App() {
     }
   );
 
+  if (!wasmState.loaded) {
+    if (wasmState.error) {
+      return <Splash title={title}>{wasmState.error}</Splash>;
+    }
+    return <Splash title={title}>{loading}</Splash>;
+  }
+
   return (
     <Container>
       <Terminal
+        title={title}
         prompt={state.gameState === GameState.None ? "(no game)" : ">"}
         lines={lines}
         input={input}
