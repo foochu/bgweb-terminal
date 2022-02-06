@@ -7,20 +7,8 @@ Based on GNU Backgammon (https://www.gnu.org/software/gnubg) under GPL license.
 ## Run the application
 
 ```sh
-# 1 - install docker & node
-
-# 2 - clone this repo
-
-# 3 - install dependencies:
 npm i
-
-# 4 - start backend (uses docker):
-npm run start:backend
-
-# 5 - start frontend:
 npm start
-
-# 6 - browse to http://localhost:3000
 ```
 
 ## Playing the game
@@ -36,6 +24,6 @@ Basic commands during play:
   - `move bar/20` = Same as above but both dice combined
   - `move 1/off` = Bear off from point 1. Also `o` works here.
   - `move 24/23(2)` = Move 2 chequers from 24 to 23.
-- `play` = Make computer make their turn.
+- `play` = Tell computer make their turn.
 - `hint` = Show best moves for a given position and dice roll.
 - `help` = Describe commands

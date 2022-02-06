@@ -22,7 +22,6 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "start:backend": "docker run -p 8080:8080 -d foochu/bgweb-api:latest",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
