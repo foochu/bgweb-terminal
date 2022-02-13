@@ -17,6 +17,19 @@ const title =
 
 const loading = "      Loading, please wait...   ";
 
+const help =
+  " -------------------------------------------\n" +
+  " | Command    | Description                |\n" +
+  " -------------------------------------------\n" +
+  " | new game   | Start a new game           |\n" +
+  " | move       | Make a backgammon move     |\n" +
+  " | play       | Tell the computer to move  |\n" +
+  " | roll       | Roll the dice              |\n" +
+  " | hint       | Give hint on best moves    |\n" +
+  " | help       | Describe commands          |\n" +
+  " | clear      | Clear the screen           |\n" +
+  " -------------------------------------------";
+
 const Container = styled.div`
   height: 100vh;
 `;
@@ -46,7 +59,7 @@ const go: any = new Go();
 
 function App() {
   const [state, setState] = useState(initState());
-  const [lines, setLines] = useState<string[]>([]);
+  const [lines, setLines] = useState<string[]>([help]);
   const [input, setInput] = useState("");
 
   const wasmState = useWasm(
@@ -58,14 +71,6 @@ function App() {
   );
 
   let commands = getCommands(state, setState);
-
-  useEffect(() => {
-    (async function () {
-      let help = await commands["help"]("");
-      setLines([...lines, ...help]);
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     const maxLines = 150;
@@ -103,7 +108,9 @@ function App() {
         onInput={(val) => setInput(val)}
         onSubmit={async ({ line, argv }) => {
           const [command, ...rest] = argv;
-          if (command === "clear") {
+          if (command === "help") {
+            setLines([...lines, line, help]);
+          } else if (command === "clear") {
             setLines([]);
           } else if (commands[command]) {
             const args = rest.join(" ");

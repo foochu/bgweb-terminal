@@ -7,7 +7,7 @@ import { hint } from "./hint/hint";
 import { IMatchState } from "../types";
 
 type CommandTable = {
-  [name: string]: { def: CmdDef; desc: string };
+  [name: string]: { def: CmdDef };
 };
 
 type CmdDef = CmdProto | CommandTable | string;
@@ -15,20 +15,18 @@ type CmdDef = CmdProto | CommandTable | string;
 const table: CommandTable = {
   new: {
     def: {
-      game: { def: newGame, desc: "Start a new game" },
+      game: { def: newGame },
     },
-    desc: "Start a new game or match",
   },
-  move: { def: move, desc: "Make a backgammon move" },
-  play: { def: play, desc: "Tell the computer to move" },
+  move: { def: move },
+  play: { def: play },
   // decline,
   // redouble,
-  // reject: { def: reject, desc: "Reject a cube or resignation" },
-  // resign: { def: resign, desc: "Offer to end the current game" },
-  roll: { def: roll, desc: "Roll the dice" },
+  // reject: { def: reject },
+  // resign: { def: resign },
+  roll: { def: roll },
   // take,
-  hint: { def: hint, desc: "Give hint on best moves" },
-  help: { def: help, desc: "Describe commands" },
+  hint: { def: hint },
 };
 
 export type { CmdProto };
@@ -81,52 +79,4 @@ function subCmd(sub: CommandTable): CmdProto {
     }
     return await fn(args);
   };
-}
-
-async function help(args: CmdArgs): Promise<IMatchState> {
-  const { argv, state, stdout } = args;
-  let output: string[] = [];
-  const tablewidth = 43,
-    cmdlen = 10,
-    desclen = tablewidth - cmdlen - 7;
-
-  function cmdHelp(cmd: string) {
-    if (isCommandTable(table[cmd].def)) {
-      // has nested commands
-      let subTable: CommandTable = table[cmd].def as CommandTable;
-      for (let sub of Object.getOwnPropertyNames(subTable)) {
-        output.push(
-          ` | ${(cmd + " " + sub).padEnd(cmdlen)} | ${(subTable[sub].desc || "")
-            .substring(0, desclen)
-            .padEnd(desclen)} |`
-        );
-      }
-    } else {
-      output.push(
-        ` | ${cmd.padEnd(cmdlen)} | ${(table[cmd].desc || "")
-          .substring(0, desclen)
-          .padEnd(desclen)} |`
-      );
-    }
-  }
-
-  output.push(` ${"-".repeat(tablewidth)}`);
-  output.push(
-    ` | ${"Command".padEnd(cmdlen)} | ${"Description".padEnd(desclen)} |`
-  );
-  output.push(` ${"-".repeat(tablewidth)}`);
-  if (argv[0]) {
-    cmdHelp(argv[0]);
-  } else {
-    // print all commands
-    for (let name of Object.getOwnPropertyNames(table)) {
-      cmdHelp(name);
-    }
-    output.push(
-      ` | ${"clear".padEnd(cmdlen)} | ${"Clear the screen".padEnd(desclen)} |`
-    );
-  }
-  output.push(` ${"-".repeat(tablewidth)}`);
-  stdout(output.join("\n"));
-  return state;
 }

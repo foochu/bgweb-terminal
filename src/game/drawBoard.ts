@@ -1,5 +1,4 @@
 import { IBoard, ICheckerLayout, PlayerSide, STDIO } from "../types";
-import { positionIdFromBoard } from "./positionid";
 
 const achX = "     X6789ABCDEF";
 const achO = "     O6789ABCDEF";
@@ -258,7 +257,7 @@ function formatPlayerInfo(
     txt += `points: ${p.points}`.padStart(18);
   }
 
-  txt += "      "
+  txt += "      ";
 
   return txt;
 }

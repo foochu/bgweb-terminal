@@ -11,47 +11,42 @@ describe("commands", () => {
     type: PlayerType.Computer,
   };
 
-  it("should help", () => {
+  beforeEach(() => {
+    let i = 1;
+    jest.spyOn(global.Math, "random").mockImplementation(() => (i -= 0.33));
+  });
+
+  afterEach(() => {
+    jest.spyOn(global.Math, "random").mockRestore();
+  });
+
+  it("should run nested command", async () => {
     let stdout = jest.fn(),
       stderr = jest.fn();
 
     let state: IMatchState = {
       players: { x, o },
       board: {
-        x: { 6: 5, 8: 3, 13: 5, 24: 2 },
-        o: { 6: 5, 8: 3, 13: 5, 24: 2 },
+        x: {},
+        o: {},
       },
       inTurn: x,
       onRoll: x,
-      gameState: GameState.Playing,
+      gameState: GameState.None,
       points: { x: 0, o: 0 },
     };
 
-    let help = commands.filter(({ name }) => name === "help")[0].fn;
+    let cmd = commands.filter(({ name }) => name === "new")[0].fn;
 
-    help({
-      argv: [],
+    await cmd({
+      argv: ["game"],
       state,
       stdout,
       stderr,
     });
 
     expect(stderr.mock.calls.length).toEqual(0);
-    expect(stdout.mock.calls.length).toEqual(1);
-    expect(stdout.mock.calls).toEqual([
-      [
-        ` -------------------------------------------
- | Command    | Description                |
- -------------------------------------------
- | new game   | Start a new game           |
- | move       | Make a backgammon move     |
- | play       | Tell the computer to move  |
- | roll       | Roll the dice              |
- | hint       | Give hint on best moves    |
- | help       | Describe commands          |
- | clear      | Clear the screen           |
- -------------------------------------------`,
-      ],
-    ]);
+    expect(stdout.mock.calls.length).toEqual(2);
+    expect(stdout.mock.calls[0]).toEqual(["chuck rolls 5, cpu rolls 3."]);
   });
 });
