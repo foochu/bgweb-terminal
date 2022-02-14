@@ -245,7 +245,7 @@ function formatPlayerInfo(
 ) {
   let txt = "  ";
   txt += `${sign}: ${p.name}`.padEnd(18);
-  txt += `[${`${pips}`.padEnd(3)}]`;
+  txt += `[${`${pips}`.padStart(3)}]`;
 
   // if (p.cube) {
   //   txt += ` (Cube: ${p.cube})`;

@@ -123,7 +123,7 @@ describe("draw board", () => {
     drawBoard(stdout, board, PlayerSide.X, info);
 
     expect(stdout.mock.calls.map((a) => a[0])).toEqual([
-      "  O: cpu            [33 ]       points: 0/7      ",
+      "  O: cpu            [ 33]       points: 0/7      ",
       " +13-14-15-16-17-18------19-20-21-22-23-24-+     ",
       " |                  |   | O  O  O  O     O | OO  ",
       " |                  |   | O     O          | OO  ",
@@ -137,7 +137,7 @@ describe("draw board", () => {
       " |                  |   |       X  X  X  X | X   ",
       " |                  |   |    X  X  X  X  X | XX  ",
       " +12-11-10--9--8--7-------6--5--4--3--2--1-+     ",
-      "  X: chuck          [25 ]       points: 0/7      ",
+      "  X: chuck          [ 25]       points: 0/7      ",
     ]);
   });
 });
