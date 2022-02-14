@@ -64,6 +64,10 @@ function App() {
 
   const workerState = useWorker("service-worker.js");
 
+  const pingQuery = useQuery(`/ping`, () => fetch("/api/v1/ping"), {
+    enabled: workerState.loaded,
+  });
+
   let commands = getCommands(state, setState);
 
   useEffect(() => {
@@ -85,7 +89,7 @@ function App() {
     }
   );
 
-  if (!workerState.loaded) {
+  if (!pingQuery.data) {
     if (workerState.error) {
       return <Splash title={title}>{workerState.error}</Splash>;
     }

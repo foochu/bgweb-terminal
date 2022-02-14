@@ -4,7 +4,7 @@ self.importScripts("wasm_exec.js");
 
 const go = new Go();
 
-let wasmPromise = (async function loadWasm() {
+let wasmLoaded = (async function loadWasm() {
   const response = await fetch(WASM);
   if (!response.ok) {
     throw new Error(`Failed to fetch wasm ${WASM}.`);
@@ -13,12 +13,24 @@ let wasmPromise = (async function loadWasm() {
     response,
     go.importObject
   );
+
+  // this wasm runs "forever" so can't await
   go.run(instance);
+
+  // instead, wait until wasm registers global function "wasm_get_moves"
+  let tries = 0;
+  while (!wasm_get_moves) {
+    const WAIT = 300;
+    await new Promise((resolve) => setTimeout(resolve, WAIT));
+    if (tries++ > 10000 / WAIT) {
+      break;
+    }
+  }
 })();
 
 self.addEventListener("install", function (event) {
   self.skipWaiting();
-  event.waitUntil(wasmPromise);
+  event.waitUntil(wasmLoaded);
 });
 
 self.addEventListener("activate", function (event) {
@@ -53,17 +65,23 @@ self.addEventListener("fetch", function (event) {
     url.pathname
   );
 
-  if (request.method === "POST" && url.pathname.match(/\/api\/v1\/getmoves/)) {
-    event.waitUntil(wasmPromise);
+  if (request.method === "GET" && url.pathname.match(/\/api\/v1\/ping/)) {
     return event.respondWith(
       new Promise(async function (resolve) {
-        let tries = 0;
-        while (!wasm_get_moves) {
-          await new Promise((resolve) => setTimeout(resolve, 300));
-          if (tries++ > 10) {
-            break;
-          }
-        }
+        await wasmLoaded;
+        resolve(
+          new Response("ok", {
+            headers: { "Content-Type": "text/plain" },
+          })
+        );
+      })
+    );
+  }
+
+  if (request.method === "POST" && url.pathname.match(/\/api\/v1\/getmoves/)) {
+    return event.respondWith(
+      new Promise(async function (resolve) {
+        await wasmLoaded;
         const body = await request.text();
         resolve(
           new Response(wasm_get_moves(body), {
