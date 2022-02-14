@@ -19,11 +19,15 @@ describe("play", () => {
         { from: "6", to: "5" },
       ],
     };
-    window.wasm_get_moves = jest.fn(() => JSON.stringify([move]));
+    jest.spyOn(global, "fetch").mockReturnValue({
+      status: 200,
+      ok: true,
+      json: async () => [move],
+    } as any);
   });
 
   afterEach(() => {
-    window.wasm_get_moves = undefined;
+    jest.spyOn(global, "fetch").mockRestore();
   });
 
   it("should play", async () => {

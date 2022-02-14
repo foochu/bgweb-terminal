@@ -16,7 +16,12 @@ describe("roll", () => {
   beforeEach(() => {
     jest.spyOn(global.Math, "random").mockReturnValue(0.49);
 
-    window.wasm_get_moves = jest.fn(() => JSON.stringify(legalMoves));
+    // mock fetch
+    jest.spyOn(global, "fetch").mockReturnValue({
+      status: 200,
+      ok: true,
+      json: async () => legalMoves,
+    } as any);
 
     legalMoves = [
       {
@@ -32,7 +37,7 @@ describe("roll", () => {
 
   afterEach(() => {
     jest.spyOn(global.Math, "random").mockRestore();
-    window.wasm_get_moves = undefined;
+    jest.spyOn(global, "fetch").mockRestore();
   });
 
   it("should roll", async () => {

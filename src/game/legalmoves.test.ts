@@ -23,11 +23,16 @@ describe("legal moves", () => {
   ];
 
   beforeEach(() => {
-    window.wasm_get_moves = jest.fn(() => JSON.stringify(legalMoves));
+    // mock fetch
+    jest.spyOn(global, "fetch").mockReturnValue({
+      status: 200,
+      ok: true,
+      json: async () => legalMoves,
+    } as any);
   });
 
   afterEach(() => {
-    window.wasm_get_moves = undefined;
+    jest.spyOn(global, "fetch").mockRestore();
   });
 
   it("should find legal moves", async () => {

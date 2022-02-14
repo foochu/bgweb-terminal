@@ -53,11 +53,16 @@ describe("hint", () => {
   ];
 
   beforeEach(() => {
-    window.wasm_get_moves = jest.fn(() => JSON.stringify(bestMoves));
+    // mock fetch
+    jest.spyOn(global, "fetch").mockReturnValue({
+      status: 200,
+      ok: true,
+      json: async () => bestMoves,
+    } as any);
   });
 
   afterEach(() => {
-    window.wasm_get_moves = undefined;
+    jest.spyOn(global, "fetch").mockRestore();
   });
 
   it("should give hint", async () => {

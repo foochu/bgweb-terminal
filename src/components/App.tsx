@@ -8,7 +8,7 @@ import { formatMove } from "../game/formatMove";
 import { useQuery, UseQueryResult } from "react-query";
 import { positionIdFromBoard } from "../game/positionid";
 import { getAllMoves } from "../api";
-import { useWasm } from "../wasm/useWasm";
+import { useWorker } from "../sw/useWorker";
 
 const title =
   "Backgammon Web Terminal\n" +
@@ -54,21 +54,15 @@ function initState(): IMatchState {
   };
 }
 
-// @ts-expect-error: global.Go is fetched via a <script> tag
-const go: any = new Go();
+// // @ts-expect-error: global.Go is fetched via a <script> tag
+// const go: any = new Go();
 
 function App() {
   const [state, setState] = useState(initState());
   const [lines, setLines] = useState<string[]>([help]);
   const [input, setInput] = useState("");
 
-  const wasmState = useWasm(
-    "gbweb.1.wasm",
-    go.importObject,
-    async (instance) => {
-      await go.run(instance);
-    }
-  );
+  const workerState = useWorker("service-worker.js");
 
   let commands = getCommands(state, setState);
 
@@ -91,9 +85,9 @@ function App() {
     }
   );
 
-  if (!wasmState.loaded) {
-    if (wasmState.error) {
-      return <Splash title={title}>{wasmState.error}</Splash>;
+  if (!workerState.loaded) {
+    if (workerState.error) {
+      return <Splash title={title}>{workerState.error}</Splash>;
     }
     return <Splash title={title}>{loading}</Splash>;
   }
