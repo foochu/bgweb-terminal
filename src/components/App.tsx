@@ -54,9 +54,6 @@ function initState(): IMatchState {
   };
 }
 
-// // @ts-expect-error: global.Go is fetched via a <script> tag
-// const go: any = new Go();
-
 function App() {
   const [state, setState] = useState(initState());
   const [lines, setLines] = useState<string[]>([help]);
@@ -64,7 +61,7 @@ function App() {
 
   const workerState = useWorker("service-worker.js");
 
-  const pingQuery = useQuery(`/ping`, () => fetch("/api/v1/ping"), {
+  const pingQuery = useQuery([`/ping`], () => fetch("/api/v1/ping"), {
     enabled: workerState.loaded,
   });
 
@@ -82,7 +79,7 @@ function App() {
   ).join(",")}]`;
 
   const movesQuery = useQuery(
-    `/moves/${stateId}`,
+    [`/moves/${stateId}`],
     () => getAllMoves(state.board, getCurrentSide(state), state.dice || []),
     {
       enabled: !!state.dice,
